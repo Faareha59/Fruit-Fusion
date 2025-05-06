@@ -25,7 +25,7 @@ const AdminLoginScreen = ({ navigation }) => {
       Alert.alert("Error", "Please enter both username and password.");
       return;
     }
-
+// Replace with your real admin credentials  
     // Replace with your real admin credentials
     if (username === "admin" && password === "password123") {
       try {
