@@ -8,41 +8,25 @@ import {
   Alert,
   Image,
   StatusBar,
-  ScrollView,
-  Button
+  ScrollView
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const AdminLoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
+const SignupScreen = ({ navigation }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleAdminLogin = async () => {
-    if (!username || !password) {
-      Alert.alert("Error", "Please enter both username and password.");
-      return;
-    }
-
-    // Replace with your real admin credentials
-    if (username === "admin" && password === "password123") {
-      try {
-        // Set admin session token
-        await AsyncStorage.setItem("adminAuthenticated", "true");
-        navigation.replace("AdminDashboard");
-      } catch (error) {
-        Alert.alert("Error", "Failed to create admin session.");
-      }
-    } else {
-      setError("Invalid credentials");
-    }
+  const handleSignup = async () => {
+    navigation.navigate("Login");
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <StatusBar backgroundColor="#FF7E1E" barStyle="light-content" />
+      <StatusBar backgroundColor="#FFA451" barStyle="light-content" />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Image
@@ -50,18 +34,28 @@ const AdminLoginScreen = ({ navigation }) => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.welcomeText}>Admin Portal</Text>
-          <Text style={styles.subtitle}>Login to your admin account</Text>
+          <Text style={styles.welcomeText}>Welcome to Fruit Hub</Text>
+          <Text style={styles.subtitle}>Create an account</Text>
         </View>
 
         <View style={styles.formContainer}>
-          <Text style={styles.inputLabel}>Username</Text>
+          <Text style={styles.inputLabel}>Full Name</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter admin username"
-            value={username}
-            onChangeText={setUsername}
+            placeholder="Your full name"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+          />
+
+          <Text style={styles.inputLabel}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="yourname@email.com"
+            value={email}
+            onChangeText={setEmail}
             autoCapitalize="none"
+            keyboardType="email-address"
           />
 
           <Text style={styles.inputLabel}>Password</Text>
@@ -85,20 +79,39 @@ const AdminLoginScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {error && <Text style={styles.error}>{error}</Text>}
+          <Text style={styles.inputLabel}>Confirm Password</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="• • • • • • • •"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry={!showConfirmPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={styles.eyeIcon}
+            >
+              <Ionicons
+                name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                size={22}
+                color="#5D577E"
+              />
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
-            style={[styles.button, !username || !password ? styles.buttonDisabled : null]}
-            onPress={handleAdminLogin}
-            disabled={!username || !password}
+            style={[styles.button, !name || !email || !password || !confirmPassword ? styles.buttonDisabled : null]}
+            onPress={handleSignup}
+            disabled={!name || !email || !password || !confirmPassword}
           >
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
 
-          <View style={styles.userLoginContainer}>
-            <Text style={styles.userLoginText}>Not an admin? </Text>
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginText}>Already have an account? </Text>
             <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text style={styles.userLoginLink}>Go to User Login</Text>
+              <Text style={styles.loginLink}>Login</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -157,7 +170,7 @@ const styles = StyleSheet.create({
   },
   passwordContainer: {
     position: "relative",
-    marginBottom: 16,
+    marginBottom: 24,
   },
   passwordInput: {
     height: 56,
@@ -174,37 +187,35 @@ const styles = StyleSheet.create({
     top: 16,
   },
   button: {
-    backgroundColor: "#FF7E1E",
+    backgroundColor: "#FFA451",
     height: 56,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
     marginBottom: 24,
-  },
-  buttonDisabled: {
-    backgroundColor: "#FFBE90",
-  },
-  buttonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  userLoginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
     marginTop: 16,
   },
-  userLoginText: {
+  buttonDisabled: {
+    backgroundColor: "#C2BDBD",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  loginContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  loginText: {
     color: "#5D577E",
     fontSize: 14,
   },
-  userLoginLink: {
-    color: "#FF7E1E",
+  loginLink: {
+    color: "#FFA451",
+    fontWeight: "bold",
     fontSize: 14,
-    fontWeight: "600",
   },
-  error: { color: "red", marginBottom: 10, textAlign: "center" }
 });
 
-export default AdminLoginScreen; 
+export default SignupScreen;

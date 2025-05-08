@@ -1,5 +1,6 @@
+// screens/SplashScreen.js
 import React, { useEffect } from "react";
-import { View, Image, StyleSheet, StatusBar } from "react-native";
+import { View, Image, StyleSheet, StatusBar, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SplashScreen = ({ navigation }) => {
@@ -9,19 +10,12 @@ const SplashScreen = ({ navigation }) => {
 
   const checkAuthStatus = async () => {
     try {
-      // Check if admin is authenticated
-      const isAdminAuthenticated = await AsyncStorage.getItem("adminAuthenticated");
-      
-      // Wait 2 seconds for splash screen effect
+      // Always navigate to Login screen instead of checking admin status
       setTimeout(() => {
-        if (isAdminAuthenticated === "true") {
-          navigation.replace("AdminDashboard");
-        } else {
-          navigation.replace("Login");
-        }
+        navigation.replace("Login");
       }, 2000);
     } catch (error) {
-      console.error("Error checking auth status:", error);
+      console.error("Error in splash screen:", error);
       // Default to login screen if there's an error
       setTimeout(() => {
         navigation.replace("Login");
@@ -33,9 +27,14 @@ const SplashScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar backgroundColor="#FFA451" barStyle="light-content" />
       <Image
-        source={require("../assets/images/Group 20.png")}
+        source={require("../assets/images/kisspng-fruit-basket-clip-art-5aed5301d44408 1.png")}
         style={styles.logo}
         resizeMode="contain"
+      />
+      <Button
+        title="Admin Login"
+        onPress={() => navigation.replace("AdminLogin")}
+        color="#333"
       />
     </View>
   );
