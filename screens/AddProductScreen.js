@@ -25,9 +25,7 @@ import { app } from '../firebase/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const database = getDatabase(app);
-const realtimeDb = database; // For compatibility
-
-// Use unicode characters instead of icons to avoid text rendering issues
+const realtimeDb = database;
 const ICONS = {
   BACK: "←",
   CHEVRON_DOWN: "▼",
@@ -46,25 +44,21 @@ const AddProductScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
-  const [dropdownVisible, setDropdownVisible] = useState(false); // State for dropdown visibility
+  const [dropdownVisible, setDropdownVisible] = useState(false); 
 
   useEffect(() => {
-    // Load categories when component mounts
     const loadCategories = async () => {
       try {
         setIsCategoriesLoading(true);
-        
-        // First try to load from AsyncStorage (admin categories)
+      
         let foundCategories = [];
         const asyncStorageCategories = await AsyncStorage.getItem('categories');
         
         if (asyncStorageCategories) {
-          // Format depends on which admin screen was used
           const parsedCategories = JSON.parse(asyncStorageCategories);
           
           if (Array.isArray(parsedCategories)) {
             if (typeof parsedCategories[0] === 'string') {
-              // Simple string array from AdminCategoriesScreen
               foundCategories = parsedCategories.map(name => ({
                 id: name,
                 name: name,
@@ -74,7 +68,6 @@ const AddProductScreen = ({ navigation }) => {
               setIsCategoriesLoading(false);
               return;
             } else if (parsedCategories[0] && parsedCategories[0].name) {
-              // Object array from CategoryManagementScreen
               foundCategories = parsedCategories;
               setCategories(foundCategories);
               setIsCategoriesLoading(false);
@@ -82,34 +75,28 @@ const AddProductScreen = ({ navigation }) => {
             }
           }
         }
-        
-        // If no categories found in AsyncStorage, try Firebase
         const result = await getAllCategories();
         
         if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
-          // Categories found in database
           const sanitizedCategories = result.data.map(cat => ({
             id: cat.id || String(Math.random()),
             name: cat.name || 'Unnamed Category',
           }));
           setCategories(sanitizedCategories);
         } else if (result && Array.isArray(result) && result.length > 0) {
-          // Handle direct array response
           const sanitizedCategories = result.map(cat => ({
             id: cat.id || String(Math.random()),
             name: cat.name || 'Unnamed Category',
           }));
           setCategories(sanitizedCategories);
         } else {
-          // No categories found - add default categories
           console.log('No categories found, adding defaults');
           const defaultCategories = [
             { id: "1", name: "Fruits", color: "#FF7E1E", icon: "nutrition", isActive: true },
             { id: "2", name: "Vegetables", color: "#4CAF50", icon: "nutrition", isActive: true },
             { id: "3", name: "Mixed", color: "#2196F3", icon: "nutrition", isActive: true }
           ];
-          
-          // Add default categories to Firebase
+
           for (const category of defaultCategories) {
             try {
               await addCategory(category);
@@ -117,18 +104,15 @@ const AddProductScreen = ({ navigation }) => {
               console.error('Error adding default category:', err);
             }
           }
-          
-          // Save default categories to AsyncStorage too
+
           await AsyncStorage.setItem('categories', JSON.stringify(defaultCategories));
           
-          // Set the categories in state
           setCategories(defaultCategories);
         }
       } catch (error) {
         console.error('Error loading categories:', error);
         Alert.alert('Error', 'Failed to load categories. Please try again.');
-        
-        // Set default categories even on error
+
         const defaultCategories = [
           { id: "1", name: "Fruits", color: "#FF7E1E", icon: "nutrition", isActive: true },
           { id: "2", name: "Vegetables", color: "#4CAF50", icon: "nutrition", isActive: true },
@@ -145,14 +129,12 @@ const AddProductScreen = ({ navigation }) => {
 
   const pickImage = async () => {
     try {
-      // Request permission
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permission Required', 'Please allow access to your photo library to select an image');
         return;
       }
 
-      // Launch image picker
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -201,8 +183,6 @@ const AddProductScreen = ({ navigation }) => {
     setIsLoading(true);
 
     try {
-      // Store the image URI directly in the Realtime Database
-      // No need to upload to Firebase Storage
       const imageUrl = imageUri || 'https://via.placeholder.com/300';
       
       const newProduct = {
@@ -211,7 +191,7 @@ const AddProductScreen = ({ navigation }) => {
         price: parseFloat(price),
         stock: parseInt(stock),
         category,
-        image: imageUrl, // Store image directly in Realtime Database
+        image: imageUrl, 
         createdAt: new Date().toISOString(),
       };
 
@@ -235,7 +215,6 @@ const AddProductScreen = ({ navigation }) => {
     }
   };
 
-  // Category Dropdown Component
   const CategoryDropdown = () => {
     return (
       <View>
@@ -326,7 +305,7 @@ const AddProductScreen = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Add New Product</Text>
           <View style={{ width: 40 }}>
-            {/* Empty view for flex alignment */}
+            {}
           </View>
         </View>
 
@@ -345,7 +324,6 @@ const AddProductScreen = ({ navigation }) => {
                   style={styles.productImage}
                   onError={() => {
                     console.log('Failed to load image:', imageUri);
-                    // If image fails to load, set the URI to null to show the placeholder
                     setImageUri(null);
                   }}
                   defaultSource={require('../assets/images/kisspng-fruit-basket-clip-art-5aed5301d44408 1.png')}
@@ -533,7 +511,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  // Icon text style
   iconText: {
     fontSize: 20,
     color: '#333',
@@ -545,7 +522,6 @@ const styles = StyleSheet.create({
     color: '#ccc',
     textAlign: 'center',
   },
-  // Dropdown styles
   dropdownButton: {
     flexDirection: 'row',
     alignItems: 'center',
