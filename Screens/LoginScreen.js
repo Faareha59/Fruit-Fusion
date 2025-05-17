@@ -14,7 +14,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
-// Import using our safe auth methods instead of direct Firebase
+
 import * as AuthService from '../firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
