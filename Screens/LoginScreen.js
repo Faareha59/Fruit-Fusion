@@ -13,12 +13,18 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from 'axios';
+// Import using our safe auth methods instead of direct Firebase
+import * as AuthService from '../firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Firebase Realtime Database URL
+  const BASE_URL = 'https://fruit-acf8e-default-rtdb.firebaseio.com/';
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -29,71 +35,59 @@ const LoginScreen = ({ navigation }) => {
     setIsLoading(true);
     
     try {
-      // Simple validation
-      if (!email.includes('@')) {
-        Alert.alert("Error", "Please enter a valid email address");
-        setIsLoading(false);
-        return;
+      // Get all users from Firebase
+      const response = await axios.get(`${BASE_URL}/users.json`);
+      console.log("Fetched users data");
+
+      if (response.data) {
+        // Find user with matching email and password
+        const users = Object.entries(response.data);
+        const matchedUser = users.find(([id, userData]) => 
+          userData.email === email && userData.password === password
+        );
+
+        if (matchedUser) {
+          const [userId, userData] = matchedUser;
+          console.log("User found:", userId);
+
+          // Save user info locally
+          const userInfo = {
+            id: userId,
+            ...userData,
+            isLoggedIn: true
+          };
+          await AsyncStorage.setItem('userData', JSON.stringify(userInfo));
+
+          // Navigate based on user role
+          if (userData.role === 'admin') {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'AdminDashboard' }],
+            });
+          } else {
+            navigation.reset({
+              index: 0,
+              routes: [{ 
+                name: 'UserDashboard',
+                params: { 
+                  userId: userId,
+                  firstName: userData.name || email.split('@')[0]
+                }
+              }],
+            });
+          }
+        } else {
+          Alert.alert("Error", "Invalid email or password");
+        }
+      } else {
+        Alert.alert("Error", "No users found");
       }
-      
-      // Save user data to AsyncStorage
-      const userData = {
-        id: Date.now().toString(),
-        email,
-        firstName: email.split('@')[0], // Simple way to extract a name
-        isLoggedIn: true
-      };
-      
-      await AsyncStorage.setItem('userData', JSON.stringify(userData));
-      
-      // Navigate directly to Home screen
-      navigation.reset({
-        index: 0,
-        routes: [{ 
-          name: 'Home',
-          params: { firstName: userData.firstName }
-        }],
-      });
     } catch (error) {
       console.error("Login error:", error);
-      Alert.alert("Error", "Login failed. Please try again.");
+      Alert.alert("Error", "Failed to login. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Skip login for testing purposes
-  const skipLogin = async () => {
-    try {
-      // Create guest user data
-      const guestData = {
-        id: "guest-" + Date.now().toString(),
-        email: "guest@example.com",
-        firstName: "Guest",
-        isLoggedIn: true,
-        isGuest: true
-      };
-      
-      // Save to AsyncStorage
-      await AsyncStorage.setItem('userData', JSON.stringify(guestData));
-      
-      // Navigate directly to Home screen
-      navigation.reset({
-        index: 0,
-        routes: [{ 
-          name: 'Home',
-          params: { firstName: guestData.firstName }
-        }],
-      });
-    } catch (error) {
-      console.error("Error in skip login:", error);
-      Alert.alert("Error", "Failed to skip login. Please try again.");
-    }
-  };
-
-  // Navigate to admin login
-  const goToAdminLogin = () => {
-    navigation.navigate("AdminLogin");
   };
 
   return (
@@ -106,7 +100,7 @@ const LoginScreen = ({ navigation }) => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.welcomeText}>Welcome to Fruit Hub</Text>
+          <Text style={styles.welcomeText}>Welcome to Fruit Fusion</Text>
           <Text style={styles.subtitle}>Login to your account</Text>
         </View>
 
@@ -142,10 +136,6 @@ const LoginScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.forgotPasswordButton}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
           <TouchableOpacity
             style={[styles.button, (isLoading || !email || !password) ? styles.buttonDisabled : null]}
             onPress={handleLogin}
@@ -167,17 +157,10 @@ const LoginScreen = ({ navigation }) => {
           
           <TouchableOpacity 
             style={styles.adminLoginButton}
-            onPress={goToAdminLogin}
+            onPress={() => navigation.navigate("AdminLogin")}
           >
             <Ionicons name="shield-outline" size={18} color="#FF7E1E" />
             <Text style={styles.adminLoginText}>Admin Portal</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.skipButton}
-            onPress={skipLogin}
-          >
-            <Text style={styles.skipButtonText}>Skip Login (For Testing)</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -235,7 +218,7 @@ const styles = StyleSheet.create({
   },
   passwordContainer: {
     position: "relative",
-    marginBottom: 16,
+    marginBottom: 40,
   },
   passwordInput: {
     height: 56,
@@ -250,14 +233,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 16,
     top: 16,
-  },
-  forgotPasswordButton: {
-    alignSelf: "flex-end",
-    marginBottom: 40,
-  },
-  forgotPasswordText: {
-    color: "#27214D",
-    fontSize: 14,
   },
   button: {
     backgroundColor: "#FFA451",
@@ -305,14 +280,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginLeft: 8,
-  },
-  skipButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-  },
-  skipButtonText: {
-    color: "#5D577E",
-    fontSize: 14,
   },
 });
 
