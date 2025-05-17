@@ -63,7 +63,7 @@ Fruit Fusion/
 
 ## GitHub Repo
 
-[https://github.com/Faareha59/Fruit-Fusion](https://github.com/Tooba-Baqai)
+[https://github.com/Faareha59/Fruit-Fusion](https://github.com/Faareha59/Fruit-Fusion)(https://github.com/Tooba-Baqai)
 
 ## Contributors
 
