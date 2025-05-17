@@ -54,7 +54,7 @@ const AdminCategoriesScreen = ({ navigation }) => {
         await AsyncStorage.setItem("categories", JSON.stringify(defaultCategories));
       }
     } catch (error) {
-      console.error("Error loading categories:", error);
+      console.error("Error loading categories.", error);
       Alert.alert("Error", "Failed to load categories.");
     } finally {
       setIsLoading(false);

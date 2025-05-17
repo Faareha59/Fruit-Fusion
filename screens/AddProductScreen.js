@@ -340,7 +340,7 @@ const AddProductScreen = ({ navigation }) => {
               <Text style={styles.label}>Product Name *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter product name"
+                placeholder="Enter product name:"
                 value={productName}
                 onChangeText={setProductName}
               />

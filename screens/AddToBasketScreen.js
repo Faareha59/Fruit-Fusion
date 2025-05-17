@@ -283,7 +283,7 @@ const AddToBasketScreen = ({ route, navigation }) => {
         
         {}
         <Text style={styles.description}>
-          {item.description || "No description available for this product."}
+          {item.description || "No description available for this product.."}
         </Text>
 
         {}
