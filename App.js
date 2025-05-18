@@ -66,7 +66,7 @@ function LoadingScreen() {
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
-
+ 
   useEffect(() => {
     console.log('App started, waiting for initialization...');
     const timer = setTimeout(() => {
