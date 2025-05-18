@@ -76,8 +76,6 @@ const initializeDatabase = async () => {
       }
       console.log('Categories initialized successfully');
     }
-
-    // Check if products already exist
     const productsSnapshot = await getDocs(collection(db, 'products'));
     if (productsSnapshot.empty) {
       console.log('Initializing products...');

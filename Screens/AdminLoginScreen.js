@@ -64,14 +64,14 @@ const AdminLoginScreen = ({ navigation }) => {
       
       if (isUsernameValid && isPasswordValid) {
         console.log('Admin login successful');
-        
+ 
         const adminData = {
           username: username,
           role: 'admin',
           isLoggedIn: true,
           lastLogin: new Date().toISOString()
         };
-        
+     
         await AsyncStorage.setItem("adminAuthenticated", "true");
         await AsyncStorage.setItem("userData", JSON.stringify(adminData));
         
@@ -90,7 +90,7 @@ const AdminLoginScreen = ({ navigation }) => {
         } catch (firebaseError) {
           console.warn('Failed to save admin login to Firebase:', firebaseError);
         }
-        
+    
         navigation.reset({
           index: 0,
           routes: [{ 

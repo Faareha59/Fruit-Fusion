@@ -1,3 +1,4 @@
+
 import { ref, set, get, remove, update, child, push, onValue } from "firebase/database";
 import { database } from '../config/firebaseConfig';
 
@@ -66,6 +67,7 @@ export const updateProduct = async (productId, productData) => {
   }
 };
 
+// Delete a product
 export const deleteProduct = async (productId) => {
   try {
     const productRef = ref(database, `products/${productId}`);
@@ -76,6 +78,7 @@ export const deleteProduct = async (productId) => {
   }
 };
 
+// Get a product by ID
 export const getProductById = async (productId) => {
   try {
     const productRef = ref(database, `products/${productId}`);
@@ -94,6 +97,9 @@ export const getProductById = async (productId) => {
   }
 };
 
+// -------------------- Categories --------------------
+
+// Get all categories
 export const getAllCategories = async () => {
   try {
     const categoriesRef = ref(database, 'categories');
@@ -116,6 +122,7 @@ export const getAllCategories = async () => {
   }
 };
 
+// Add a new category
 export const addCategory = async (categoryData) => {
   try {
     const categoriesRef = ref(database, 'categories');
@@ -206,15 +213,15 @@ export const addOrder = async (orderData) => {
 
 export const validateOrderData = (orderData) => {
   const validatedOrder = { ...orderData };
-
+ 
   if (validatedOrder.items && Array.isArray(validatedOrder.items)) {
     validatedOrder.items = validatedOrder.items.map(item => {
       let price = Number(item.price);
       if (isNaN(price)) price = 0;
- 
+
       let quantity = Number(item.quantity);
       if (isNaN(quantity)) quantity = 0;
-
+   
       return {
         ...item,
         price: price,
@@ -222,7 +229,7 @@ export const validateOrderData = (orderData) => {
       };
     });
   }
- 
+
   const calculatedTotal = (validatedOrder.items || []).reduce(
     (sum, item) => sum + (Number(item.price) * Number(item.quantity)), 0
   );
@@ -236,7 +243,7 @@ export const validateOrderData = (orderData) => {
       totalAmount = alternateTotal;
     }
   }
-
+ 
   validatedOrder.totalAmount = totalAmount;
   
   return validatedOrder;

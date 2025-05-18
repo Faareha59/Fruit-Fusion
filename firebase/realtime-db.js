@@ -23,7 +23,7 @@ export const subscribeToOrdersInRealtimeDb = (callback, userId = null, errorCall
               id: childSnapshot.key,
               ...childSnapshot.val()
             };
-     
+
             if (!userId || order.userId === userId) {
               orders.push(order);
             }

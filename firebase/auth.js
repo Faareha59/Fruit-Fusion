@@ -1,4 +1,3 @@
-// Firebase Authentication Service
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -7,7 +6,6 @@ import {
 } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 
-// Register a new user
 export const registerUser = async (email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -23,7 +21,6 @@ export const registerUser = async (email, password) => {
   }
 };
 
-// Login a user
 export const loginUser = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -39,7 +36,6 @@ export const loginUser = async (email, password) => {
   }
 };
 
-// Logout the current user
 export const logoutUser = async () => {
   try {
     await signOut(auth);
@@ -52,12 +48,10 @@ export const logoutUser = async () => {
   }
 };
 
-// Get the current user
 export const getCurrentUser = () => {
   return auth.currentUser;
 };
 
-// Subscribe to auth state changes
 export const subscribeToAuthChanges = (callback) => {
   return onAuthStateChanged(auth, callback);
 }; 

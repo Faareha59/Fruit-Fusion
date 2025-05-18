@@ -48,6 +48,7 @@ const CategoryManagementScreen = ({ navigation }) => {
           { id: "2", name: "Vegetables", color: "#4CAF50", icon: "nutrition", isActive: true },
           { id: "3", name: "Mixed", color: "#2196F3", icon: "nutrition", isActive: true }
         ];
+  
         await AsyncStorage.setItem('categories', JSON.stringify(defaultCategories));
         setCategories(defaultCategories);
       }
@@ -126,9 +127,9 @@ const CategoryManagementScreen = ({ navigation }) => {
             
             try {
               const updatedCategories = categories.filter(category => category.id !== id);
-              
+
               setCategories(updatedCategories);
-              
+      
               await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
               
               Alert.alert("Success", "Category deleted successfully");
