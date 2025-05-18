@@ -34,18 +34,14 @@ const ProductDetailsScreen = ({ route, navigation }) => {
     setIsAddingToCart(true);
     
     try {
-      // Get current basket from AsyncStorage
       const basketString = await AsyncStorage.getItem('basket');
       const basket = basketString ? JSON.parse(basketString) : [];
-      
-      // Check if product already in basket
+  
       const existingItemIndex = basket.findIndex(item => item.id === product.id);
       
       if (existingItemIndex !== -1) {
-        // Update quantity if already in basket
         basket[existingItemIndex].quantity += quantity;
       } else {
-        // Add new item to basket
         basket.push({
           id: product.id,
           name: product.name,
@@ -56,10 +52,8 @@ const ProductDetailsScreen = ({ route, navigation }) => {
         });
       }
       
-      // Save updated basket to AsyncStorage
       await AsyncStorage.setItem('basket', JSON.stringify(basket));
       
-      // Show confirmation
       Alert.alert(
         'Added to Cart',
         `${quantity} ${product.name} added to your cart.`,

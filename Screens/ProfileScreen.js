@@ -55,10 +55,8 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleEditToggle = () => {
     if (isEditing) {
-      // Save changes
       saveUserData();
     } else {
-      // Start editing
       setEditedData({ ...userData });
     }
     setIsEditing(!isEditing);
@@ -66,7 +64,6 @@ const ProfileScreen = ({ navigation }) => {
 
   const saveUserData = async () => {
     try {
-      // Validate data
       if (!editedData.firstName.trim()) {
         Alert.alert("Error", "First name is required");
         return;
@@ -76,11 +73,8 @@ const ProfileScreen = ({ navigation }) => {
         Alert.alert("Error", "Email is required");
         return;
       }
-      
-      // Update state
       setUserData({ ...editedData });
-      
-      // Save to AsyncStorage
+
       const userDataToSave = {
         ...await AsyncStorage.getItem("userData").then(data => JSON.parse(data || '{}')),
         ...editedData
@@ -109,15 +103,13 @@ const ProfileScreen = ({ navigation }) => {
           text: "Logout", 
           onPress: async () => {
             try {
-              // Clear all user data
               await AsyncStorage.multiRemove([
                 "userData",
                 "basket",
                 "favorites",
                 "adminAuthenticated"
               ]);
-              
-              // Reset navigation to Login screen
+           
               navigation.reset({
                 index: 0,
                 routes: [{ name: 'Login' }]
