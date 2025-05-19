@@ -38,7 +38,6 @@ const SignupScreen = ({ navigation }) => {
     setIsLoading(true);
 
     try {
-      // Create new user data
       const userData = {
         email: email,
         password: password,
@@ -47,12 +46,10 @@ const SignupScreen = ({ navigation }) => {
         createdAt: new Date().toISOString()
       };
 
-      // Save to Firebase using POST to generate unique ID
       const response = await axios.post(`${BASE_URL}/users.json`, userData);
       console.log('User created:', response.data);
 
       if (response.data) {
-        // Show success message and navigate to Login screen
         Alert.alert(
           "Success",
           "Account created successfully! Please login with your credentials.",

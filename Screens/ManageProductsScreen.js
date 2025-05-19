@@ -31,17 +31,14 @@ const ManageProductsScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Load products on mount and when screen comes into focus
   useEffect(() => {
     checkAdminAuth();
     loadProducts();
   }, []);
 
-  // Handle refresh parameter from navigation
   useEffect(() => {
     if (route.params?.refresh) {
       loadProducts();
-      // Clear the refresh parameter
       navigation.setParams({ refresh: undefined });
     }
   }, [route.params?.refresh]);
@@ -72,7 +69,6 @@ const ManageProductsScreen = ({ navigation, route }) => {
     
     try {
       console.log('Setting up Firebase subscription for products');
-      // Subscribe to real-time updates
       const unsubscribe = subscribeToProducts((updatedProducts) => {
         console.log(`Received ${updatedProducts.length} products from Firebase`);
         setProducts(updatedProducts);
@@ -90,7 +86,6 @@ const ManageProductsScreen = ({ navigation, route }) => {
       setErrorMessage('Failed to connect to database. Please try again.');
       setIsLoading(false);
 
-      // Try to load products once if subscription fails
       try {
         const fetchedProducts = await getAllProducts();
         setProducts(fetchedProducts);
@@ -102,7 +97,6 @@ const ManageProductsScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // Filter products based on search query
     if (searchQuery.trim() === '') {
       setFilteredProducts(products);
     } else {
@@ -132,7 +126,6 @@ const ManageProductsScreen = ({ navigation, route }) => {
           onPress: async () => {
             try {
               await deleteProduct(productId);
-              // No need to update state manually as we have a subscription
               Alert.alert('Success! 🎉', 'Product has been deleted successfully!');
             } catch (error) {
               console.error('Error deleting product:', error);
@@ -364,7 +357,7 @@ const styles = StyleSheet.create({
   },
   productList: {
     padding: 16,
-    paddingBottom: 80, // Extra padding for FAB
+    paddingBottom: 80,
   },
   productCard: {
     backgroundColor: "#FFFFFF",

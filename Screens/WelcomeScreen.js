@@ -6,7 +6,6 @@ const WelcomeScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Your Firebase URL
   const BASE_URL = 'https://fruit-acf8e-default-rtdb.firebaseio.com/';
 
   useEffect(() => {
@@ -15,14 +14,11 @@ const WelcomeScreen = ({ navigation }) => {
 
   async function fetchUsers() {
     try {
-      // Check if users exist
       const response = await axios.get(`${BASE_URL}/users.json`);
       console.log('Users data:', response.data);
 
       if (!response.data) {
-        // If no users exist, create initial users
         await createInitialUsers();
-        // Fetch again after creating
         const newResponse = await axios.get(`${BASE_URL}/users.json`);
         const usersData = newResponse.data;
         const usersList = Object.keys(usersData).map(key => ({
@@ -31,7 +27,6 @@ const WelcomeScreen = ({ navigation }) => {
         }));
         setUsers(usersList);
       } else {
-        // Convert users object to array
         const usersData = response.data;
         const usersList = Object.keys(usersData).map(key => ({
           id: key,
@@ -69,7 +64,6 @@ const WelcomeScreen = ({ navigation }) => {
         }
       };
 
-      // Create users node
       await axios.put(`${BASE_URL}/users.json`, initialUsers);
       console.log('Initial users created');
     } catch (error) {
@@ -92,7 +86,6 @@ const WelcomeScreen = ({ navigation }) => {
       const response = await axios.post(`${BASE_URL}/users.json`, newUser);
       console.log('New user added:', response.data);
       alert('New user added successfully!');
-      // Refresh the users list
       fetchUsers();
     } catch (error) {
       console.error('Error adding new user:', error);
